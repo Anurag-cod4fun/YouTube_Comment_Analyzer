@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Simple Page</title>
+    <link rel="stylesheet" href="../static/screen.css" />
+    <!-- Importing D3.js library -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+  </head>
+
+  <body>
+    <div class="span2 cursor1">
+      <header>
+        <h1>Youtube Comment Analyser</h1>
+      </header>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Linkedin</a></li>
+          <li><a href="#">Github</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+
+      <main>
+        <div class="container">
+          <section>
+            <h2>Get Insights !</h2>
+            <p>
+              It takes approx about 5 to 6 minutes to scrap 1000 comments.<br />
+              The application needs the calculated time to scrap the comments of
+              the video.<br />
+              Kindly wait for the process to finish.
+            </p>
+          </section>
+
+          <form id="scrapform" method="post" action="/scrap">
+            <div>
+              <input
+                type="text"
+                placeholder="Enter URL"
+                name="youtube url"
+                id="uid"
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                placeholder="Enter Email"
+                name="user mail id"
+                id="uid"
+              />
+            </div>
+            <!-- <input type="submit" value="Scrap" id="scrap_button" onclick="$('#loading').show();"><br><br> -->
+          </form>
+
+          <!-------------------------------------- 7 ------------------------------------------------------------------------->
+          <!-- loader Button -->
+          <button
+            class="btn"
+            type="submit"
+            form="scrapform"
+            value="Scrap"
+            onclick="this.classList.toggle('btn--loading')"
+          >
+            <span class="button_text">Scrap</span>
+          </button>
+
+          <!-- ---------------------------------------------------------------------------------------------------------- -->
+        </div>
+      </main>
+
+      <div class="comment">
+        {% if after_complete_message %}
+        <h3>
+          {{ after_complete_message }}<br /><br />
+          <span class="res_mes"> Video Title: </span>{{ title }}<br />
+          <span class="res_mes">Video Published by: </span>{{ owner }}<br />
+          <span class="res_mes">Total Comments including replies: </span>{{
+          comment_w_replies }}<br />
+          <span class="res_mes">Total Comments without replies: </span>{{
+          comment_wo_replies }}<br />
+          <span class="res_mes">Total Positive Comments: </span>{{
+          positive_comment }}<br />
+          <span class="res_mes">Total Negative Comments: </span>{{
+          negative_comment }}<br />
+        </h3>
+        {% endif %}<br />
+
+        <!-- Add pie charts for positive and negative comments -->
+        <div style="display: flex; justify-content: center">
+          <div id="positiveChart"></div>
+          <div id="negativeChart"></div>
+        </div>
+
+        {% if after_complete_message %}
+        <script>
+          // Get positive and negative comment counts from server
+          const posCount = { positive_comment };
+          const negCount = { negative_comment };
+
+          // Create pie chart for positive comments
+          const posData = [
+            { label: "Positive", count: posCount },
+            { label: "Negative", count: 100 - posCount }
+          ];
+
+          const posWidth = 300;
+          const posHeight = 300;
+          const posMargin = 40;
+
+          const posRadius = Math.min(posWidth, posHeight) / 2 - posMargin;
+
+          const posSvg = d3.select("#positive-chart")
+            .append("svg")
+            .attr("width", posWidth)
+            .attr("height", posHeight)
+            .append("g")
+            .attr("transform", `translate(${posWidth / 2}, ${posHeight / 2})`);
+
+          const posColor = d3.scaleOrdinal()
+            .domain(posData.map(d => d.label))
+            .range(["#1b9e77", "#d95f02"]);
+
+          const posPie = d3.pie().value(d => d.count);
+
+          const posArc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(posRadius);
+
+          const posPieChart = posSvg.selectAll("arc")
+            .data(posPie(posData))
+            .enter()
+            .append("g");
+
+          posPieChart.append("path")
+            .attr("d", posArc)
+            .attr("fill", d => posColor(d.data.label));
+
+          posPieChart.append("text")
+            .attr("transform", d => `translate(${posArc.centroid(d)})`)
+            .attr("text-anchor", "middle")
+            .text(d => d.data.count);
+
+          // Create pie chart for negative comments
+          const negData = [
+            { label: "Positive", count: 100 - negCount },
+            { label: "Negative", count: negCount },
+          ];
+
+          const negWidth = 300;
+          const negHeight = 300;
+          const negMargin = 40;
+
+          const negRadius = Math.min(negWidth, negHeight) / 2 - negMargin;
+
+          const negSvg = d3.select("#negative-chart")
+            .append("svg")
+            .attr("width", negWidth)
+            .attr("height", negHeight)
+            .append("g")
+            .attr("transform", `translate(${negWidth / 2}, ${negHeight / 2})`);
+
+          const negColor = d3.scaleOrdinal()
+            .domain(negData.map(d => d.label))
+            .range(["#1b9e77", "#d95f02"]);
+
+          const negPie = d3.pie().value(d => d.count);
+
+          const negArc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(negRadius);
+
+          const negPieChart = negSvg.selectAll("arc")
+            .data(negPie(negData))
+            .enter()
+            .append("g");
+
+          negPieChart.append("path")
+            .attr("d", negArc)
+            .attr("fill", d => negColor(d.data.label));
+
+          negPieChart.append("text")
+            .attr("transform", d => `translate(${negArc.centroid(d)})`)
+            .attr("text-anchor", "middle")
+            .text(d => d.data.count);
+        </script>
+        {% endif %}
+
+        <div style="overflow-x: auto">
+          {% if after_complete_message %}
+          <h3><span class="pos_head">Positive Comments</span></h3>
+          <table>
+            <tr>
+              {% for pos_comments in pos_comments_csv %} {{ pos_comments |
+              safe}} {% endfor %}
+            </tr>
+          </table>
+          <br />
+          {% endif %}
+        </div>
+
+        <div style="overflow-x: auto">
+          {% if after_complete_message %}
+          <h3><span class="neg_head">Negative Comments</span></h3>
+          <table>
+            <tr>
+              {% for neg_comments in neg_comments_csv %} {{ neg_comments |
+              safe}} {% endfor %}
+            </tr>
+          </table>
+          <br />
+          {% endif %}
+        </div>
+      </div>
+
+      <footer>
+        <p>&copy; 2023 Simple Page. All rights reserved.</p>
+      </footer>
+    </div>
+  </body>
+</html>
