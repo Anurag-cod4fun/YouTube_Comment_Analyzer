@@ -1,6 +1,6 @@
 # YouTube Comment Analysis
 
-![YouTube Comment Analysis](comment_analysis.jpg)
+![YouTube Comment Analysis](y1.png)
 
 This repository provides a simple tool for scraping comments from YouTube videos and performing sentiment analysis to classify the comments as positive or negative. The goal of this project is to gain insights into the sentiment of the viewers regarding a particular video.
 
