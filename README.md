@@ -1,4 +1,3 @@
-# YouTube_Comment_Analyzer
 # YouTube Comment Analysis
 
 ![YouTube Comment Analysis](comment_analysis.jpg)
@@ -66,10 +65,6 @@ YouTube is a platform where users can express their opinions and thoughts about 
 ## Contributing
 
 Contributions are welcome! If you find any issues or want to enhance the functionality, feel free to submit a pull request. Please ensure that your code follows the project's coding conventions.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
 
 ---
 
