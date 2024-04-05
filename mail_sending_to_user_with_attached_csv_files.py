@@ -15,7 +15,7 @@ def mailsend(emailto):
   emailfrom = "patilanurag405@gmail.com"
   fileToSend = ["Full Comments.csv", "Positive Comments.csv", "Negative Comments.csv"]
   username = "patilanurag405@gmail.com"
-  password = "rdizzpuuvpgvnxui"
+  password = "yourpassword"
 
   ## Mail Subject
 
